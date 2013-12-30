@@ -18,7 +18,10 @@ class FeedbackView(CreateView):
         kwargs = super(FeedbackView, self).get_form_kwargs()
         post = kwargs['data'].copy()
         post['url'] = self.kwargs['url']
-        post['site'] = Site.objects.get_current().pk
+
+        if 'django.contrib.sites' in settings.INSTALLED_APPS:
+            post['site'] = Site.objects.get_current().pk
+            
         kwargs['data'] = post
         return kwargs
 

@@ -1,10 +1,9 @@
 from django.db import models
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext as _
-
+from django.conf import settings
 
 class Feedback(models.Model):
-    site = models.ForeignKey(Site, verbose_name=_('site'))
     url = models.CharField(max_length=255, verbose_name=_('url'))
     subject = models.CharField(max_length=255, blank=True, null=True,
             verbose_name=_('subject'))
@@ -13,3 +12,9 @@ class Feedback(models.Model):
 
     def __unicode__(self):
         return u'{url}: {subject}'.format(url=self.url, subject=self.subject)
+
+    def __new__(cls):
+        if 'django.contrib.sites' in settings.INSTALLED_APPS:
+            cls.site = models.ForeignKey(Site, verbose_name=_('site'))
+
+        super(Feedback, self).__new__()
